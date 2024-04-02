@@ -140,18 +140,21 @@ const exampleStage = new aws.apigateway.Stage("example", {
 });
 
 // Add a method (GET) to the created resource
-const methodGet = new aws.apigateway.Method("mimiget", {
-    restApi: restApi,
-    resourceId: resource.id,
-    httpMethod: "GET",
-    authorization: "NONE",
-});
-
-const methodPost = new aws.apigateway.Method("mimipost", {
+const methodGet = new aws.apigateway.Method("mimicpost", {
     restApi: restApi,
     resourceId: resource.id,
     httpMethod: "POST",
     authorization: "NONE",
+});
+
+const methodPost = new aws.apigateway.Method("mimiget", {
+    restApi: restApi,
+    resourceId: resource.id,
+    httpMethod: "GET",
+    authorization: "NONE",
+    requestParameters: {
+        "method.request.path.id": true 
+    }
 });
 
 
