@@ -153,7 +153,7 @@ const restApi = new aws.apigateway.RestApi("mimic-api", {});
 const resource = new aws.apigateway.Resource("mimicresource", {
     restApi: restApi,
     parentId: restApi.rootResourceId,
-    pathPart: "/{proxy+}"
+    pathPart: "{id}"
 });
 
 // Add a method (GET) to the created resource
@@ -212,7 +212,6 @@ new aws.lambda.Permission("apigatewayResponse", {
     principal: "apigateway.amazonaws.com",
     sourceArn: pulumi.interpolate`${restApi.executionArn}/*/*`
 });
-
 
 
 export const dynamoTableName = mimicTable.name;
