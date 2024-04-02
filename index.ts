@@ -126,10 +126,10 @@ const restApi = new aws.apigateway.RestApi("mimic-api", {});
 const resource = new aws.apigateway.Resource("mimicresource", {
     restApi: restApi,
     parentId: restApi.rootResourceId,
-    pathPart: "mimic",
+    pathPart: "mimic"
 });
 
-const restApiDeployment = new aws.apigateway.Deployment("example", {
+const restApiDeployment = new aws.apigateway.Deployment("dev", {
     restApi: restApi.id,
 });
 
@@ -140,14 +140,14 @@ const exampleStage = new aws.apigateway.Stage("dev", {
 });
 
 // Add a method (GET) to the created resource
-const methodGet = new aws.apigateway.Method("mimicpost", {
+const methodPost = new aws.apigateway.Method("mimicpost", {
     restApi: restApi,
     resourceId: resource.id,
     httpMethod: "POST",
     authorization: "NONE",
 });
 
-const methodPost = new aws.apigateway.Method("mimiget", {
+const methodGet = new aws.apigateway.Method("mimicget", {
     restApi: restApi,
     resourceId: resource.id,
     httpMethod: "GET",
@@ -165,7 +165,7 @@ const integrationListen = new aws.apigateway.Integration("integrationsListen", {
     httpMethod: methodGet.httpMethod,
     integrationHttpMethod: "GET",
     type: "AWS_PROXY",
-    uri: lambda_listen.invokeArn,
+    uri: lambda_listen.invokeArn
 });
 
 // Set up an integration between the method and the Lambda function
@@ -175,21 +175,21 @@ const integrationResponse = new aws.apigateway.Integration("integrationsResponse
     httpMethod: methodPost.httpMethod,
     integrationHttpMethod: "POST",
     type: "AWS_PROXY",
-    uri: lambda_response.invokeArn,
+    uri: lambda_response.invokeArn
 });
 
 new aws.lambda.Permission("apigatewayListen", {
     action: "lambda:invokeFunction",
     function: lambda_listen,
     principal: "apigateway.amazonaws.com",
-    sourceArn: pulumi.interpolate`${restApi.executionArn}/*/*`,
+    sourceArn: pulumi.interpolate`${restApi.executionArn}/*/*`
 });
 
 new aws.lambda.Permission("apigatewayResponse", {
     action: "lambda:invokeFunction",
     function: lambda_response,
     principal: "apigateway.amazonaws.com",
-    sourceArn: pulumi.interpolate`${restApi.executionArn}/*/*`,
+    sourceArn: pulumi.interpolate`${restApi.executionArn}/*/*`
 });
 
 
