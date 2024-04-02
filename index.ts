@@ -203,11 +203,11 @@ const restApiDeployment = new aws.apigateway.Deployment("dev-deployment", {
 }, { dependsOn: [integrationListen , integrationResponse ] });
 
 
-const devStage = new aws.apigateway.Stage("dev-stage", {
-    deployment: restApiDeployment.id,
-    restApi: restApi.id,
-    stageName: "dev",
-});
+// const devStage = new aws.apigateway.Stage("dev-stage", {
+//     deployment: restApiDeployment.id,
+//     restApi: restApi.id,
+//     stageName: "dev",
+// });
 
 new aws.lambda.Permission("apigatewayListen", {
     action: "lambda:invokeFunction",
