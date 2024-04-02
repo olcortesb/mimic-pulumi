@@ -37,6 +37,7 @@ complex_build_job:
 pulumi:
   stage: infrastructure-update
   before_script:
+    - ls
     - chmod +x ./scripts/*.sh
     - ./scripts/setup.sh
   script:
