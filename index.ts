@@ -8,7 +8,8 @@ const bucket = new aws.s3.Bucket("my-bucket");
 // Export the name of the bucket
 export const bucketName = bucket.id;
 
-const iamForLambdaListen = new aws.iam.Role("iamForLambdaListen", {assumeRolePolicy: `{
+const iamForLambdaListen = new aws.iam.Role("iamForLambdaListen", {
+    assumeRolePolicy: `{
     "Version": "2012-10-17",
     "Statement": [
       {
@@ -23,7 +24,8 @@ const iamForLambdaListen = new aws.iam.Role("iamForLambdaListen", {assumeRolePol
   }
   `});
 
-  const iamForLambdaResponse = new aws.iam.Role("iamForLambdaResponse", {assumeRolePolicy: `{
+const iamForLambdaResponse = new aws.iam.Role("iamForLambdaResponse", {
+    assumeRolePolicy: `{
     "Version": "2012-10-17",
     "Statement": [
       {
@@ -48,7 +50,7 @@ const mimicTable = new aws.dynamodb.Table("mimic-table", {
     readCapacity: 1,
     writeCapacity: 1,
 });
-  
+
 // Attach a policy to allow the Lambda function to access DynamoDB
 const dynamoPolicyListen = new aws.iam.RolePolicy("dynamoPolicyListen", {
     role: iamForLambdaListen,
@@ -118,5 +120,65 @@ const lambda_response = new aws.lambda.Function("lambda_response_pulumi", {
         },
     },
 });
+
+const restApi = new aws.apigateway.RestApi("mimic-api", {});
+
+// Create a resource under the REST API
+const resource = new aws.apigateway.Resource("mimicresource", {
+    restApi: restApi,
+    parentId: restApi.rootResourceId,
+    pathPart: "mimic",
+});
+
+// Add a method (GET) to the created resource
+const methodGet = new aws.apigateway.Method("mimiget", {
+    restApi: restApi,
+    resourceId: resource.id,
+    httpMethod: "GET",
+    authorization: "NONE",
+});
+
+const methodPost = new aws.apigateway.Method("mimiget", {
+    restApi: restApi,
+    resourceId: resource.id,
+    httpMethod: "POST",
+    authorization: "NONE",
+});
+
+
+// Set up an integration between the method and the Lambda function
+const integrationListen = new aws.apigateway.Integration("integrationsListen", {
+    restApi: restApi,
+    resourceId: resource.id,
+    httpMethod: methodGet.httpMethod,
+    integrationHttpMethod: "GET",
+    type: "AWS_PROXY",
+    uri: lambda_listen.invokeArn,
+});
+
+// Set up an integration between the method and the Lambda function
+const integrationResponse = new aws.apigateway.Integration("integrationsResponse", {
+    restApi: restApi,
+    resourceId: resource.id,
+    httpMethod: methodPost.httpMethod,
+    integrationHttpMethod: "POST",
+    type: "AWS_PROXY",
+    uri: lambda_response.invokeArn,
+});
+
+new aws.lambda.Permission("apigatewayListen", {
+    action: "lambda:invokeFunction",
+    function: lambda_listen,
+    principal: "apigateway.amazonaws.com",
+    sourceArn: pulumi.interpolate`${restApi.executionArn}/*/*`,
+});
+
+new aws.lambda.Permission("apigatewayListen", {
+    action: "lambda:invokeFunction",
+    function: lambda_response,
+    principal: "apigateway.amazonaws.com",
+    sourceArn: pulumi.interpolate`${restApi.executionArn}/*/*`,
+});
+
 
 export const dynamoTableName = mimicTable.name;
