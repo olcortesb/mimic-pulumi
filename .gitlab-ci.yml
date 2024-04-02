@@ -6,7 +6,7 @@
 # Only for master branch merges, the main `pulumi` job is executed automatically.
 stages:
   - git-clone-lambda-code
-  - build
+  - npm-install
   - infrastructure-update
 
 # Each stage may require multiple jobs to complete that stage.
@@ -29,10 +29,18 @@ git-clone-lambda-code:
     paths:
       - repository
 
-complex_build_job:
-  stage: build
+npm-install:
+  stage: npm-install
+  image: node:18
+  before_script:
+    - ls
+    - npm --version
   script:
-    - echo "pulumi rocks!"
+    - cd repository/src
+    - npm install
+  artifacts:
+    paths:
+      - repository
 
 pulumi:
   stage: infrastructure-update
