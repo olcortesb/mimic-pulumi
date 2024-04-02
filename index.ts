@@ -214,5 +214,36 @@ const lambdaRolePolicyAttachmentResponse = new aws.iam.RolePolicyAttachment("lam
     policyArn: "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
 });
 
+
+const lambdaExecutionPolicyLogs = new aws.iam.Policy("lambdaExecutionPolicyLogs", {
+    policy: {
+        Version: "2012-10-17",
+        Statement: [{
+            Action: [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+            ],
+            Resource: "arn:aws:logs:*:*:*",
+            Effect: "Allow",
+        }],
+    },
+});
+
+const lambdaRolePolicyAttachment = new aws.iam.RolePolicyAttachment("lambdaRolePolicyAttachmentListen", {
+    role: iamForLambdaListen.name,
+    policyArn: lambdaExecutionPolicyLogs.arn,
+});
+
+
+// To ensure the Lambda function has permissions to create and put logs
+const lambdaLogPermission = new aws.lambda.Permission("lambdaLogPermission", {
+    action: "lambda:InvokeFunction",
+    function: lambda_listen.arn,
+    principal: "logs.amazonaws.com",
+    sourceArn: logGroupListen.arn,
+});
+
+
 export const dynamoTableName = mimicTable.name;
 export const restApiUrl = pulumi.interpolate`${restApi.executionArn}/*/*`;
