@@ -230,7 +230,7 @@ const lambdaExecutionPolicyLogs = new aws.iam.Policy("lambdaExecutionPolicyLogs"
     },
 });
 
-const lambdaRolePolicyAttachment = new aws.iam.RolePolicyAttachment("lambdaRolePolicyAttachmentListen", {
+const lambdaRolePolicyAttachment = new aws.iam.RolePolicyAttachment("lambdaRoleLogPolicyAttachmentListen", {
     role: iamForLambdaListen.name,
     policyArn: lambdaExecutionPolicyLogs.arn,
 });
