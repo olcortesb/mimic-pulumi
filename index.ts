@@ -190,5 +190,29 @@ new aws.lambda.Permission("apigatewayResponse", {
 });
 
 
+// CloudWatch
+
+const logGroupListen = new aws.cloudwatch.LogGroup("lambdaLogGroup", {
+    name: `/aws/lambda/${lambda_listen.name}`,
+    retentionInDays: 7, // keep logs for 7 days; customize retention as needed
+});
+
+const logGroupResponse = new aws.cloudwatch.LogGroup("lambdaLogGroup", {
+    name: `/aws/lambda/${lambda_response.name}`,
+    retentionInDays: 7, // keep logs for 7 days; customize retention as needed
+});
+
+
+// Attach the AWSLambdaBasicExecutionRole policy to the role
+const lambdaRolePolicyAttachmentListen = new aws.iam.RolePolicyAttachment("lambdaRolePolicyAttachmentListen", {
+    role: iamForLambdaListen,
+    policyArn: "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+});
+
+const lambdaRolePolicyAttachmentResponse = new aws.iam.RolePolicyAttachment("lambdaRolePolicyAttachmentResponse", {
+    role: iamForLambdaResponse,
+    policyArn: "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+});
+
 export const dynamoTableName = mimicTable.name;
 export const restApiUrl = pulumi.interpolate`${restApi.executionArn}/*/*`;
