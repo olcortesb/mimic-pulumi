@@ -155,13 +155,13 @@ const lambda_response = new aws.lambda.Function("lambda_response_pulumi", {
 const restApi = new aws.apigateway.RestApi("mimic-api", {});
 
 // Create a resource under the REST API
-const resourcePost = new aws.apigateway.Resource("mimicresource", {
+const resourcePost = new aws.apigateway.Resource("mimicResourcePost", {
     restApi: restApi,
     parentId: restApi.rootResourceId,
     pathPart: "mimic"
 });
 
-const resource = new aws.apigateway.Resource("mimicresource", {
+const resource = new aws.apigateway.Resource("mimicResourceGet", {
     restApi: restApi,
     parentId: restApi.rootResourceId,
     pathPart: "{id}"
