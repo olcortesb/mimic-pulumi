@@ -8,7 +8,7 @@ const bucket = new aws.s3.Bucket("my-bucket");
 // Export the name of the bucket
 export const bucketName = bucket.id;
 
-const iamForLambdaListen = new aws.iam.Role("iamForLambda", {assumeRolePolicy: `{
+const iamForLambdaListen = new aws.iam.Role("iamForLambdaListen", {assumeRolePolicy: `{
     "Version": "2012-10-17",
     "Statement": [
       {
@@ -23,7 +23,7 @@ const iamForLambdaListen = new aws.iam.Role("iamForLambda", {assumeRolePolicy: `
   }
   `});
 
-  const iamForLambdaResponse = new aws.iam.Role("iamForLambda", {assumeRolePolicy: `{
+  const iamForLambdaResponse = new aws.iam.Role("iamForLambdaResponse", {assumeRolePolicy: `{
     "Version": "2012-10-17",
     "Statement": [
       {
