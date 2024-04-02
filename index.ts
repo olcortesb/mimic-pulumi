@@ -173,7 +173,7 @@ new aws.lambda.Permission("apigatewayListen", {
     sourceArn: pulumi.interpolate`${restApi.executionArn}/*/*`,
 });
 
-new aws.lambda.Permission("apigatewayListen", {
+new aws.lambda.Permission("apigatewayResponse", {
     action: "lambda:invokeFunction",
     function: lambda_response,
     principal: "apigateway.amazonaws.com",
