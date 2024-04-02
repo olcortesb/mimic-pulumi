@@ -193,12 +193,12 @@ new aws.lambda.Permission("apigatewayResponse", {
 // CloudWatch
 
 const logGroupListen = new aws.cloudwatch.LogGroup("mimic-listen-pulumi", {
-    name: `/aws/lambda/${lambda_listen.name}`,
+    name: "/aws/lambda/lambda-listen-pulumi",
     retentionInDays: 7, // keep logs for 7 days; customize retention as needed
 });
 
 const logGroupResponse = new aws.cloudwatch.LogGroup("mimic-response-pulumi", {
-    name: `/aws/lambda/${lambda_response.name}`,
+    name: "/aws/lambda/lambda-response-pulumi",
     retentionInDays: 7, // keep logs for 7 days; customize retention as needed
 });
 
