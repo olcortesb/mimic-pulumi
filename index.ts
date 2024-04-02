@@ -153,7 +153,7 @@ const restApi = new aws.apigateway.RestApi("mimic-api", {});
 const resource = new aws.apigateway.Resource("mimicresource", {
     restApi: restApi,
     parentId: restApi.rootResourceId,
-    pathPart: "mimic/{id}"
+    pathPart: "/{proxy+}"
 });
 
 // Add a method (GET) to the created resource
