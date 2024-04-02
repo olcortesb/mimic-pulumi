@@ -1,0 +1,7 @@
+name: pulumi-lambda
+runtime: nodejs
+description: deploy lambda with pulumi
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: aws-typescript
