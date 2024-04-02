@@ -164,7 +164,7 @@ const resourcePost = new aws.apigateway.Resource("mimicResourcePost", {
 const resource = new aws.apigateway.Resource("mimicResourceGet", {
     restApi: restApi,
     parentId: restApi.rootResourceId,
-    pathPart: "{id}"
+    pathPart: "mimic/{id}"
 });
 
 // Add a method (GET) to the created resource
