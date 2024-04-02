@@ -124,14 +124,14 @@ const resource = new aws.apigateway.Resource("mimicresource", {
     pathPart: "mimic"
 });
 
-const restApiDeployment = new aws.apigateway.Deployment("dev", {
+const restApiDeployment = new aws.apigateway.Deployment("dev-deployment", {
     restApi: restApi.id,
 });
 
-const devStage = new aws.apigateway.Stage("dev", {
+const devStage = new aws.apigateway.Stage("dev-stage", {
     deployment: restApiDeployment.id,
     restApi: restApi.id,
-    stageName: "example",
+    stageName: "dev",
 });
 
 // Add a method (GET) to the created resource
