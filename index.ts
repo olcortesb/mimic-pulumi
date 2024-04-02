@@ -133,7 +133,7 @@ const restApiDeployment = new aws.apigateway.Deployment("example", {
     restApi: restApi.id,
 });
 
-const exampleStage = new aws.apigateway.Stage("example", {
+const exampleStage = new aws.apigateway.Stage("dev", {
     deployment: restApiDeployment.id,
     restApi: restApi.id,
     stageName: "example",
