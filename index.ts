@@ -138,7 +138,7 @@ const methodGet = new aws.apigateway.Method("mimiget", {
     authorization: "NONE",
 });
 
-const methodPost = new aws.apigateway.Method("mimiget", {
+const methodPost = new aws.apigateway.Method("mimipost", {
     restApi: restApi,
     resourceId: resource.id,
     httpMethod: "POST",
