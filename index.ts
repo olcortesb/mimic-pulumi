@@ -1,7 +1,6 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 
-
 const iamForLambdaListen = new aws.iam.Role("iamForLambdaListen", {
     assumeRolePolicy: `{
     "Version": "2012-10-17",
@@ -154,9 +153,8 @@ const restApi = new aws.apigateway.RestApi("mimic-api", {});
 const resource = new aws.apigateway.Resource("mimicresource", {
     restApi: restApi,
     parentId: restApi.rootResourceId,
-    pathPart: "mimic"
+    pathPart: "mimic/{id}"
 });
-
 
 // Add a method (GET) to the created resource
 const methodPost = new aws.apigateway.Method("mimicpost", {
@@ -175,7 +173,6 @@ const methodGet = new aws.apigateway.Method("mimicget", {
         "method.request.path.id": true 
     }
 });
-
 
 // Set up an integration between the method and the Lambda function
 const integrationListen = new aws.apigateway.Integration("integrationsListen", {
@@ -202,13 +199,6 @@ const restApiDeployment = new aws.apigateway.Deployment("dev-deployment", {
     stageName: "dev",
 }, { dependsOn: [integrationListen , integrationResponse ] });
 
-
-// const devStage = new aws.apigateway.Stage("dev-stage", {
-//     deployment: restApiDeployment.id,
-//     restApi: restApi.id,
-//     stageName: "dev",
-// });
-
 new aws.lambda.Permission("apigatewayListen", {
     action: "lambda:invokeFunction",
     function: lambda_listen,
@@ -223,26 +213,6 @@ new aws.lambda.Permission("apigatewayResponse", {
     sourceArn: pulumi.interpolate`${restApi.executionArn}/*/*`
 });
 
-
-// // CloudWatch
-
-// const logGroupListen = new aws.cloudwatch.LogGroup("mimic-listen-pulumi", {
-//     name: "/aws/lambda/lambda-listen-pulumi",
-//     retentionInDays: 7, // keep logs for 7 days; customize retention as needed
-// });
-
-// const logGroupResponse = new aws.cloudwatch.LogGroup("mimic-response-pulumi", {
-//     name: "/aws/lambda/lambda-response-pulumi",
-//     retentionInDays: 7, // keep logs for 7 days; customize retention as needed
-// });
-
-// To ensure the Lambda function has permissions to create and put logs
-// const lambdaLogPermission = new aws.lambda.Permission("lambdaLogPermission", {
-//     action: "lambda:InvokeFunction",
-//     function: lambda_listen.arn,
-//     principal: "logs.amazonaws.com",
-//     sourceArn: logGroupListen.arn,
-// });
 
 
 export const dynamoTableName = mimicTable.name;
