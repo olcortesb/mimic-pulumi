@@ -155,6 +155,12 @@ const lambda_response = new aws.lambda.Function("lambda_response_pulumi", {
 const restApi = new aws.apigateway.RestApi("mimic-api", {});
 
 // Create a resource under the REST API
+const resourcePost = new aws.apigateway.Resource("mimicresource", {
+    restApi: restApi,
+    parentId: restApi.rootResourceId,
+    pathPart: "mimic"
+});
+
 const resource = new aws.apigateway.Resource("mimicresource", {
     restApi: restApi,
     parentId: restApi.rootResourceId,
@@ -164,7 +170,7 @@ const resource = new aws.apigateway.Resource("mimicresource", {
 // Add a method (GET) to the created resource
 const methodPost = new aws.apigateway.Method("mimicpost", {
     restApi: restApi,
-    resourceId: resource.id,
+    resourceId: resourcePost.id,
     httpMethod: "POST",
     authorization: "NONE",
 });
@@ -182,7 +188,7 @@ const methodGet = new aws.apigateway.Method("mimicget", {
 // Set up an integration between the method and the Lambda function
 const integrationListen = new aws.apigateway.Integration("integrationsListen", {
     restApi: restApi,
-    resourceId: resource.id,
+    resourceId: resourcePost.id,
     httpMethod: methodPost.httpMethod,
     integrationHttpMethod: "POST",
     type: "AWS_PROXY",
