@@ -81,6 +81,39 @@ const dynamoPolicyResponse = new aws.iam.RolePolicy("dynamoPolicyReponse", {
     },
 });
 
+
+// Attach the AWSLambdaBasicExecutionRole policy to the role
+const lambdaRolePolicyAttachmentListen = new aws.iam.RolePolicyAttachment("lambdaRolePolicyAttachmentListen", {
+    role: iamForLambdaListen,
+    policyArn: "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+});
+
+const lambdaRolePolicyAttachmentResponse = new aws.iam.RolePolicyAttachment("lambdaRolePolicyAttachmentResponse", {
+    role: iamForLambdaResponse,
+    policyArn: "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+});
+
+
+const lambdaExecutionPolicyLogs = new aws.iam.Policy("lambdaExecutionPolicyLogs", {
+    policy: {
+        Version: "2012-10-17",
+        Statement: [{
+            Action: [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+            ],
+            Resource: "arn:aws:logs:*:*:*",
+            Effect: "Allow",
+        }],
+    },
+});
+
+const lambdaRolePolicyAttachment = new aws.iam.RolePolicyAttachment("lambdaRoleLogPolicyAttachmentListen", {
+    role: iamForLambdaListen.name,
+    policyArn: lambdaExecutionPolicyLogs.arn,
+});
+
 // Lambda listen
 const lambda_listen = new aws.lambda.Function("lambda_listen_pulumi", {
     code: new pulumi.asset.AssetArchive({
@@ -124,15 +157,6 @@ const resource = new aws.apigateway.Resource("mimicresource", {
     pathPart: "mimic"
 });
 
-const restApiDeployment = new aws.apigateway.Deployment("dev-deployment", {
-    restApi: restApi.id,
-});
-
-const devStage = new aws.apigateway.Stage("dev-stage", {
-    deployment: restApiDeployment.id,
-    restApi: restApi.id,
-    stageName: "dev",
-});
 
 // Add a method (GET) to the created resource
 const methodPost = new aws.apigateway.Method("mimicpost", {
@@ -173,6 +197,18 @@ const integrationResponse = new aws.apigateway.Integration("integrationsResponse
     uri: lambda_response.invokeArn
 });
 
+const restApiDeployment = new aws.apigateway.Deployment("dev-deployment", {
+    restApi: restApi.id,
+    stageName: "dev",
+}, { dependsOn: [integrationListen , integrationResponse ] });
+
+
+const devStage = new aws.apigateway.Stage("dev-stage", {
+    deployment: restApiDeployment.id,
+    restApi: restApi.id,
+    stageName: "dev",
+});
+
 new aws.lambda.Permission("apigatewayListen", {
     action: "lambda:invokeFunction",
     function: lambda_listen,
@@ -199,40 +235,6 @@ new aws.lambda.Permission("apigatewayResponse", {
 //     name: "/aws/lambda/lambda-response-pulumi",
 //     retentionInDays: 7, // keep logs for 7 days; customize retention as needed
 // });
-
-
-// Attach the AWSLambdaBasicExecutionRole policy to the role
-const lambdaRolePolicyAttachmentListen = new aws.iam.RolePolicyAttachment("lambdaRolePolicyAttachmentListen", {
-    role: iamForLambdaListen,
-    policyArn: "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-});
-
-const lambdaRolePolicyAttachmentResponse = new aws.iam.RolePolicyAttachment("lambdaRolePolicyAttachmentResponse", {
-    role: iamForLambdaResponse,
-    policyArn: "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-});
-
-
-const lambdaExecutionPolicyLogs = new aws.iam.Policy("lambdaExecutionPolicyLogs", {
-    policy: {
-        Version: "2012-10-17",
-        Statement: [{
-            Action: [
-                "logs:CreateLogGroup",
-                "logs:CreateLogStream",
-                "logs:PutLogEvents",
-            ],
-            Resource: "arn:aws:logs:*:*:*",
-            Effect: "Allow",
-        }],
-    },
-});
-
-const lambdaRolePolicyAttachment = new aws.iam.RolePolicyAttachment("lambdaRoleLogPolicyAttachmentListen", {
-    role: iamForLambdaListen.name,
-    policyArn: lambdaExecutionPolicyLogs.arn,
-});
-
 
 // To ensure the Lambda function has permissions to create and put logs
 // const lambdaLogPermission = new aws.lambda.Permission("lambdaLogPermission", {
