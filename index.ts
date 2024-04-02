@@ -50,7 +50,7 @@ const mimicTable = new aws.dynamodb.Table("mimic-table", {
 });
   
 // Attach a policy to allow the Lambda function to access DynamoDB
-const dynamoPolicyListen = new aws.iam.RolePolicy("dynamoPolicy", {
+const dynamoPolicyListen = new aws.iam.RolePolicy("dynamoPolicyListen", {
     role: iamForLambdaListen,
     policy: {
         Version: "2012-10-17",
@@ -68,7 +68,7 @@ const dynamoPolicyListen = new aws.iam.RolePolicy("dynamoPolicy", {
 });
 
 // Attach a policy to allow the Lambda function to access DynamoDB
-const dynamoPolicyResponse = new aws.iam.RolePolicy("dynamoPolicy", {
+const dynamoPolicyResponse = new aws.iam.RolePolicy("dynamoPolicyReponse", {
     role: iamForLambdaResponse,
     policy: {
         Version: "2012-10-17",
