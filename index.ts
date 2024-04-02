@@ -113,6 +113,11 @@ const lambdaRolePolicyAttachment = new aws.iam.RolePolicyAttachment("lambdaRoleL
     policyArn: lambdaExecutionPolicyLogs.arn,
 });
 
+// const lambdaRolePolicyAttachmentResponseLog = new aws.iam.RolePolicyAttachment("lambdaRoleLogPolicyAttachmentResponse", {
+//     role: iamForLambdaResponse.name,
+//     policyArn: lambdaExecutionPolicyLogs.arn,
+// });
+
 // Lambda listen
 const lambda_listen = new aws.lambda.Function("lambda_listen_pulumi", {
     code: new pulumi.asset.AssetArchive({
@@ -199,14 +204,14 @@ const restApiDeployment = new aws.apigateway.Deployment("dev-deployment", {
     stageName: "dev",
 }, { dependsOn: [integrationListen , integrationResponse ] });
 
-new aws.lambda.Permission("apigatewayListen", {
+const gateway_listen = new aws.lambda.Permission("apigatewayListen", {
     action: "lambda:invokeFunction",
     function: lambda_listen,
     principal: "apigateway.amazonaws.com",
     sourceArn: pulumi.interpolate`${restApi.executionArn}/*/*`
 });
 
-new aws.lambda.Permission("apigatewayResponse", {
+const gateway_response = new aws.lambda.Permission("apigatewayResponse", {
     action: "lambda:invokeFunction",
     function: lambda_response,
     principal: "apigateway.amazonaws.com",
