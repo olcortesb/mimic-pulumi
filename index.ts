@@ -1,6 +1,5 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
-import * as awsx from "@pulumi/awsx";
 
 // Create an AWS resource (S3 Bucket)
 const bucket = new aws.s3.Bucket("my-bucket");
@@ -130,6 +129,16 @@ const resource = new aws.apigateway.Resource("mimicresource", {
     pathPart: "mimic",
 });
 
+const restApiDeployment = new aws.apigateway.Deployment("example", {
+    restApi: restApi.id,
+});
+
+const exampleStage = new aws.apigateway.Stage("example", {
+    deployment: restApiDeployment.id,
+    restApi: restApi.id,
+    stageName: "example",
+});
+
 // Add a method (GET) to the created resource
 const methodGet = new aws.apigateway.Method("mimiget", {
     restApi: restApi,
@@ -182,3 +191,4 @@ new aws.lambda.Permission("apigatewayResponse", {
 
 
 export const dynamoTableName = mimicTable.name;
+export const restApiUrl = pulumi.interpolate`${restApi.executionArn}/*/*`;
