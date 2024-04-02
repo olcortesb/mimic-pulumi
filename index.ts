@@ -1,11 +1,6 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 
-// Create an AWS resource (S3 Bucket)
-const bucket = new aws.s3.Bucket("my-bucket");
-
-// Export the name of the bucket
-export const bucketName = bucket.id;
 
 const iamForLambdaListen = new aws.iam.Role("iamForLambdaListen", {
     assumeRolePolicy: `{
@@ -133,7 +128,7 @@ const restApiDeployment = new aws.apigateway.Deployment("dev", {
     restApi: restApi.id,
 });
 
-const exampleStage = new aws.apigateway.Stage("dev", {
+const devStage = new aws.apigateway.Stage("dev", {
     deployment: restApiDeployment.id,
     restApi: restApi.id,
     stageName: "example",
@@ -162,8 +157,8 @@ const methodGet = new aws.apigateway.Method("mimicget", {
 const integrationListen = new aws.apigateway.Integration("integrationsListen", {
     restApi: restApi,
     resourceId: resource.id,
-    httpMethod: methodGet.httpMethod,
-    integrationHttpMethod: "GET",
+    httpMethod: methodPost.httpMethod,
+    integrationHttpMethod: "POST",
     type: "AWS_PROXY",
     uri: lambda_listen.invokeArn
 });
@@ -172,8 +167,8 @@ const integrationListen = new aws.apigateway.Integration("integrationsListen", {
 const integrationResponse = new aws.apigateway.Integration("integrationsResponse", {
     restApi: restApi,
     resourceId: resource.id,
-    httpMethod: methodPost.httpMethod,
-    integrationHttpMethod: "POST",
+    httpMethod: methodGet.httpMethod,
+    integrationHttpMethod: "GET",
     type: "AWS_PROXY",
     uri: lambda_response.invokeArn
 });
@@ -193,17 +188,17 @@ new aws.lambda.Permission("apigatewayResponse", {
 });
 
 
-// CloudWatch
+// // CloudWatch
 
-const logGroupListen = new aws.cloudwatch.LogGroup("mimic-listen-pulumi", {
-    name: "/aws/lambda/lambda-listen-pulumi",
-    retentionInDays: 7, // keep logs for 7 days; customize retention as needed
-});
+// const logGroupListen = new aws.cloudwatch.LogGroup("mimic-listen-pulumi", {
+//     name: "/aws/lambda/lambda-listen-pulumi",
+//     retentionInDays: 7, // keep logs for 7 days; customize retention as needed
+// });
 
-const logGroupResponse = new aws.cloudwatch.LogGroup("mimic-response-pulumi", {
-    name: "/aws/lambda/lambda-response-pulumi",
-    retentionInDays: 7, // keep logs for 7 days; customize retention as needed
-});
+// const logGroupResponse = new aws.cloudwatch.LogGroup("mimic-response-pulumi", {
+//     name: "/aws/lambda/lambda-response-pulumi",
+//     retentionInDays: 7, // keep logs for 7 days; customize retention as needed
+// });
 
 
 // Attach the AWSLambdaBasicExecutionRole policy to the role
@@ -240,12 +235,12 @@ const lambdaRolePolicyAttachment = new aws.iam.RolePolicyAttachment("lambdaRoleL
 
 
 // To ensure the Lambda function has permissions to create and put logs
-const lambdaLogPermission = new aws.lambda.Permission("lambdaLogPermission", {
-    action: "lambda:InvokeFunction",
-    function: lambda_listen.arn,
-    principal: "logs.amazonaws.com",
-    sourceArn: logGroupListen.arn,
-});
+// const lambdaLogPermission = new aws.lambda.Permission("lambdaLogPermission", {
+//     action: "lambda:InvokeFunction",
+//     function: lambda_listen.arn,
+//     principal: "logs.amazonaws.com",
+//     sourceArn: logGroupListen.arn,
+// });
 
 
 export const dynamoTableName = mimicTable.name;
