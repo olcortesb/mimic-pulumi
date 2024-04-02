@@ -178,7 +178,7 @@ const methodPost = new aws.apigateway.Method("mimicpost", {
 const methodGet = new aws.apigateway.Method("mimicget", {
     restApi: restApi,
     resourceId: resource.id,
-    httpMethod: "GET",
+    httpMethod: "POST",
     authorization: "NONE",
     requestParameters: {
         "method.request.path.id": true 
@@ -200,7 +200,7 @@ const integrationResponse = new aws.apigateway.Integration("integrationsResponse
     restApi: restApi,
     resourceId: resource.id,
     httpMethod: methodGet.httpMethod,
-    integrationHttpMethod: "GET",
+    integrationHttpMethod: "POST",
     type: "AWS_PROXY",
     uri: lambda_response.invokeArn
 });
