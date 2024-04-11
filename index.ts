@@ -118,6 +118,8 @@ const lambdaRolePolicyAttachment = new aws.iam.RolePolicyAttachment("lambdaRoleL
 //     policyArn: lambdaExecutionPolicyLogs.arn,
 // });
 
+const awsProvider = new aws.Provider('aws-provider', { region: 'eu-central-1' })
+
 // Lambda listen
 const lambda_listen = new aws.lambda.Function("lambda_listen_pulumi", {
     code: new pulumi.asset.AssetArchive({
@@ -133,7 +135,7 @@ const lambda_listen = new aws.lambda.Function("lambda_listen_pulumi", {
             MIMIC_TABLE: mimicTable.name,
         },
     },
-},{ provider: new aws.Provider('aws-provider', { region: 'eu-central-1' }) });
+},{ provider: awsProvider });
 
 // Lambda response
 const lambda_response = new aws.lambda.Function("lambda_response_pulumi", {
@@ -150,7 +152,7 @@ const lambda_response = new aws.lambda.Function("lambda_response_pulumi", {
             MIMIC_TABLE: mimicTable.name,
         },
     },
-},{ provider: new aws.Provider('aws-provider', { region: 'eu-central-1' }) });
+},{ provider: awsProvider });
 
 const restApi = new aws.apigateway.RestApi("mimic-api-pulumi", {});
 
