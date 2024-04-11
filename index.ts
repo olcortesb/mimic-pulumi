@@ -34,7 +34,7 @@ const iamForLambdaResponse = new aws.iam.Role("iamForLambdaResponse", {
   `});
 
 // Create a DynamoDB table
-const mimicTable = new aws.dynamodb.Table("mimic-table", {
+const mimicTable = new aws.dynamodb.Table("mimic-pulumi-table", {
     attributes: [
         { name: "id", type: "S" },
     ],
@@ -152,7 +152,7 @@ const lambda_response = new aws.lambda.Function("lambda_response_pulumi", {
     },
 });
 
-const restApi = new aws.apigateway.RestApi("mimic-api", {});
+const restApi = new aws.apigateway.RestApi("mimic-api-pulumi", {});
 
 // Create a resource under the REST API
 const resourcePost = new aws.apigateway.Resource("mimicResourcePost", {
