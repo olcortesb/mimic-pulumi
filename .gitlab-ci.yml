@@ -22,6 +22,7 @@ sync-with-github:
   script:
     - git remote add github https://$ACCESS_TOKEN@github.com/olcortesb/mimic-pulumi.git
     - ls -lr
+    - chmod -R 777 scripts
     - git checkout main
     - git status
     - git push github main 
