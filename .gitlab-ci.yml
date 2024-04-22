@@ -24,7 +24,7 @@ sync-with-github:
     - git fetch 
     - git checkout main
     - git status
-    - git push github main
+    - git push github main --no-thin
 
 
 # Clone repository
