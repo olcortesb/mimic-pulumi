@@ -20,7 +20,7 @@ sync-with-github:
   before_script:
     - apk add git
   script:
-    - git remove -rf .git
+    - rm -rf .git
     - git init
     - git remote add github https://$ACCESS_TOKEN@github.com/olcortesb/mimic-pulumi.git
     - git branch main && git checkout main
