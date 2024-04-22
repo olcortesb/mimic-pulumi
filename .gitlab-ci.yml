@@ -5,6 +5,7 @@
 # for all branches except the master.
 # Only for master branch merges, the main `pulumi` job is executed automatically.
 stages:
+  - sync-with-github
   - git-clone-lambda-code
   - npm-install
   - infrastructure-update
@@ -12,6 +13,17 @@ stages:
 # Each stage may require multiple jobs to complete that stage.
 # Consider a build stage, which may require building the UI, service, and a CLI.
 # All 3 individual build jobs can be attributed to the build _stage_.
+
+sync-with-github:
+  stage: sync-with-github
+  before_script:
+    - apk add git
+  script:
+    - git remote add github https://$ACCESS_TOKEN@github.com/olcortesb/mimic-pulumi.git
+    - git checkout main
+    - git status
+    - git push github main
+
 
 # Clone repository
 git-clone-lambda-code:
