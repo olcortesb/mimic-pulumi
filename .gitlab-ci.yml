@@ -5,6 +5,7 @@
 # for all branches except the master.
 # Only for master branch merges, the main `pulumi` job is executed automatically.
 stages:
+  - sync-with-github
   - git-clone-lambda-code
   - npm-install
   - infrastructure-update
