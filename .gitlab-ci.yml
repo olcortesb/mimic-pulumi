@@ -25,6 +25,7 @@ sync-with-github:
     - git config --global pack.windowMemory "100m"
     - git config --global pack.packSizeLimit "100m"
     - git config --global pack.threads "1"
+    - git fsck
     - git status
     - git push github main 
 
