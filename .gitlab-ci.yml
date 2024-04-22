@@ -16,9 +16,6 @@ stages:
 
 sync-with-github:
   stage: sync-with-github
-  image: alpine
-  before_script:
-    - apk add git
   script:
     - git remote add github https://$ACCESS_TOKEN@github.com/olcortesb/mimic-pulumi.git
     - git checkout main
