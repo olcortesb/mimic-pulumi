@@ -25,6 +25,7 @@ sync-with-github:
     - git config --global user.email "${GITHUB_USER_EMAIL}"
     - git remote add github https://$ACCESS_TOKEN@github.com/olcortesb/mimic-pulumi.git
     - git checkout main
+    - git pull github main
     - git push github main
 
 
