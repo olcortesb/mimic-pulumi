@@ -23,7 +23,7 @@ sync-with-github:
   script:
     - git config --global user.name "${GITHUB_USER_NAME}"
     - git config --global user.email "${GITHUB_USER_EMAIL}"
-    - git remote add github https://$ACCESS_TOKEN@github.com/olcortesb/mimic-pulumi.git
+    - git remote add github https://$PULUMI_ACCESS_TOKEN@github.com/olcortesb/mimic-pulumi.git
     - git checkout main
     - git push github main --force --no-thin
 
