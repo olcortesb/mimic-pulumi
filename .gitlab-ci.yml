@@ -5,7 +5,7 @@
 # for all branches except the master.
 # Only for master branch merges, the main `pulumi` job is executed automatically.
 stages:
-#  - sync-with-github
+  - sync-with-github
   - git-clone-lambda-code
   - npm-install
   - infrastructure-update
@@ -15,23 +15,23 @@ stages:
 # Consider a build stage, which may require building the UI, service, and a CLI.
 # All 3 individual build jobs can be attributed to the build _stage_.
 
-# sync-with-github:
-#   stage: sync-with-github
-#   image: alpine
-#   before_script:
-#     - apk add git
-#   script:
-#     - rm -rf .git
-#     - git init
-#     - git config --global user.email "olcortesb@gmail.com"
-#     - git config --global user.name "olcortesb"
-#     - git remote add github https://$ACCESS_TOKEN@github.com/olcortesb/mimic-pulumi.git
-#     - git branch -m master main
-#     - git branch main && git checkout main
-#     - git add .
-#     - git commit -m "$CI_COMMIT_MESSAGE"
-#     - git status
-#     - git push github main 
+sync-with-github:
+  stage: sync-with-github
+  image: alpine
+  before_script:
+    - apk add git
+  script:
+    - rm -rf .git
+    - git init
+    - git config --global user.email "olcortesb@gmail.com"
+    - git config --global user.name "olcortesb"
+    - git remote add github https://$ACCESS_TOKEN@github.com/olcortesb/mimic-pulumi.git
+    - git branch -m master main
+    - git branch main && git checkout main
+    - git add .
+    - git commit -m "$CI_COMMIT_MESSAGE"
+    - git status
+    - git push github main 
 
 
 # Clone repository
@@ -80,8 +80,8 @@ pulumi-up:
     # You may choose to not set this at all based on your organization's or team's preference.
     expire_in: 1 week
   # This job should only be created if the pipeline is created for the master (or main) branch.
-  only:
-  - main # or main
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $DESTROY != "OK"
 
 
 pulumi-destroy:
@@ -94,13 +94,6 @@ pulumi-destroy:
     - ./scripts/destroy-pulumi.sh
   # Create an artifact archive with just the pulumi log file,
   # which is created using console-redirection in run-pulumi.sh.
-  artifacts:
-    paths:
-    - pulumi-log.txt
-    # This is just a sample of how artifacts can be expired (removed) automatically in GitLab.
-    # You may choose to not set this at all based on your organization's or team's preference.
-    expire_in: 1 week
-  # This job should only be created if the pipeline is created for the master (or main) branch.
   rules:
   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $DESTROY == "OK"
 
